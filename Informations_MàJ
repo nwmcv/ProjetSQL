@@ -1,1 +1,7 @@
 11/02/2021 : Création du projet sur github
+12/02/2021 : des fichiers main.py et fonctions_base_de_donnees.py
+           : main.py contiendra la partie principale du code
+           : fonctions_base_de_donnees.py contiens les fonction pour gérer la base de données ces fonctions seront utilisé dans main.py
+                -ajout fonction connexion_bd
+                -ajout fonction execute_sql
+                
