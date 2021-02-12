@@ -23,9 +23,3 @@ def execute_sql(connexion,sql):
 
 database_connexion = connexion_bd
 run_sql = execute_sql
-
-if __name__ == '__main__':
-    """
-    Hello world
-    """
-    print('')
