@@ -18,14 +18,20 @@ def Menu():
         print('Sortie ...')
 
 def Executer():
-    req_a_executer = {}
+    q_a_executer = {}
     liste_choix_req=choix_req()
-    error,req_error=req_existe(liste_choix_req)
+    error,num_error=req_existe(liste_choix_req)
     if error==True:
-        print("\n la requete ",req_error," n'existe pas\n")
+        print("\n le numéro ",num_error," n'existe pas\n")
+        input("appuiez sur entrer pour continuer")
         return Executer()
     else:
-        print('OK')
+        for num in (liste_choix_req):
+            reqpath='requetes/'+nom_req+str(num)+'.sql'
+            txt_req=txt_requete(reqpath)
+            q_a_executer[num]=question_requete(txt_req)
+        
+
 
 def Ajouter():
     pass
@@ -77,7 +83,6 @@ def req_existe(list_num):
 
 nom_req='req'
 fichier_req='requetes/alire.md'
-
 
 
 if __name__ == '__main__':
