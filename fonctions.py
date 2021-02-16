@@ -1,5 +1,6 @@
 #coding utf8
 import sqlite3
+import os
 
 def connexion_bd(bd_path):
     """
@@ -20,24 +21,19 @@ def execute_sql(connexion,sql):
     rows = cur.fetchall()
     for row in rows:
         print(row)
+    
+def req_dispo(req):
+    return req in os.listdir('requetes/')
 
-def question(req):
-    q=req.split('\n')
-    return q[0]
-
-def requete(req):
-    q=req.split('\n')
-    return q[1]
-
-def question_requete(req):
-    q=req.split('\n')
-    return q[0],q[1]
 
 def txt_requete(req_path):
     req=open(req_path)
     txt=req.read()
     req.close()
     return txt
+
+def ajout_req_dico(dico_req,num,question,req):
+    dico_req[num]=(question,req)
 
 #Traduction des fonctions:
 database_connexion = connexion_bd
