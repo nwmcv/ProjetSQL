@@ -10,6 +10,13 @@
                 -ajout fonction requete                -> renvoie la requete d'un texte req
                 -ajout fonction question_requete       -> renvoie question et requete d'un texte req
                 
-                -ajout de quelque requetes dans le fichier requetes
-                
+                -ajout de quelque requetes dans le fichier requetes     
 ~~~~~~~~~~~
+14/02/2021: dans main.py :
+                -ajout fonction questions
+                -ajout de la fonction req_existe 
+                -ajout de la fonction choix req
+                -ajout des fonctions vides menu, excuter, ajouts, modifications,suppression
+~~~~~~~~~~~
+18/02/2021: 
+                
