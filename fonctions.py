@@ -13,16 +13,16 @@ def connexion_bd(bd_path):
         connexion = sqlite3.connect(bd_path)
     except Error as e:
         return e
-    
     return connexion
 
 def execute_sql(connexion,sql):
     cur = connexion.cursor()
     cur.execute(sql)
     rows = cur.fetchall()
-    for row in rows:
-        print(row)
+    return rows
 
+def tpl_question_req(path):
+	return(question_requete(txt_requete(path)))
 
 def question_requete(req):
     q=req.split('\n')
@@ -67,3 +67,6 @@ def affichage(texte, titre = "Requêtes tables"):
 #Traduction des fonctions:
 database_connexion = connexion_bd
 run_sql = execute_sql
+
+if __name__ == '__main__':
+	affichage('HELLO')

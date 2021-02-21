@@ -15,4 +15,11 @@ req3.sql
 #3 - En quelle année est sortie le film The Godfather ?
 SELECT startYear
 FROM title_basics
-WHERE primaryTitle=The Godfather
+WHERE primaryTitle='The Godfather'
+
+req4.sql
+#4 - En quelle année est sortie le premier film Superman ?
+SELECT min(startyear) 
+FROM title_basics 
+Where primaryTitle='Superman' 
+AND titleType='Movie'
