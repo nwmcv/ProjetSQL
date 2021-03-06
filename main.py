@@ -1,6 +1,6 @@
-#coding utf-8
 import tkinter as tk
 from tkinter import ttk
+from tkinter.messagebox import *
 import os
 import sqlite3
 
@@ -34,7 +34,6 @@ def charger_req_dico():
         list_q_req = txt.split('\n')
         numq=list_q_req[0][0]
         req[numq] = (list_q_req[0],list_q_req[1])
-        
     return req
 
 def Afficher_rep():
@@ -44,9 +43,81 @@ def Afficher_rep():
     res = execute_sql(conn,req_a_executer)
     txt_req.set(res)
 
+def test_req(sql):
+    connect = connexion_bd(dir_db+nom_db)   
+    try:
+        execute_sql(connect,sql)
+    except (TypeError,NameError,sqlite3.Error) as e:
+        return (False,e)
+    return (True,"")
+
+def modifications():
+    def ajouter():
+        if not saisie_q.get():
+            askokcancel(title="erreur question",
+                        message="Veuillez saisir une question",
+                        parent=add_q,
+                        icon = "error")
+        elif not saisie_req.get():
+            askokcancel(title="erreur requète",
+                        message="Veuillez saisir une requète",
+                        parent=add_q,
+                        icon = "error")
+        else:
+            test = test_req(saisie_req.get())
+            if not test[0]:
+                askokcancel(title="erreur requète",
+                            message="Votre requète contient une erreur :\n\n"+str(test[1]),
+                            parent=add_q,
+                            icon = "error")
+            else:
+                pass
+
+
+    modifications = tk.Tk()
+    modifications.title("Modifications")
+    modifications.geometry('720x480')
+    modifications.minsize(480,360)
+
+
+    add_q = tk.LabelFrame(modifications,
+                          text = "ajouter une question",
+                          height = 100,
+                          labelanchor = "nw")
+    txt_q = tk.Label(add_q, 
+                     text = 'écrivez si dessous la question :',
+                     height = 1,
+                     fg = "Black")
+
+    saisie_q = tk.Entry(add_q,
+                        bg = "white",
+                        borderwidth = 3)
+    txt_req = tk.Label(add_q, 
+                       text = 'écrivez si dessous la requète :',
+                       height = 1,
+                       fg = "Black")
+    saisie_req = tk.Entry(add_q,
+                          bg = "white",
+                          borderwidth = 3)
+    b_ajouter = tk.Button(add_q,
+                          text = "Ajouter",
+                          command = ajouter,
+                          width = 5)
+    
+
+    add_q.pack(fill = "x")
+    txt_q.pack(side = "top",fill = "x")
+    saisie_q.pack(side = "top", fill = "x")
+    txt_req.pack(side = "top", fill = "x")
+    saisie_req.pack(side = "top", fill = "x")
+    b_ajouter.pack(side = "top")
+    modifications.mainloop()
+
+
 dir_req = "requetes/"
 dir_db = "DATA/"
 nom_db = "imdb.db"
+
 
 if __name__=="__main__":
 
@@ -60,9 +131,9 @@ if __name__=="__main__":
     root.minsize(480,360)
 
     menu = tk.LabelFrame(root,
-                        text = "choix question",
-                        height = 100,
-                        labelanchor = "nw")
+                         text = "choix question",
+                         height = 100,
+                         labelanchor = "nw")
 
     cadre_rep = tk.LabelFrame(root,
                               bg = "white")
@@ -78,7 +149,9 @@ if __name__=="__main__":
                             fg = "Black",
                             font = ("Calibri",18))
 
-    txt_rep = tk.Label(cadre_rep,textvariable = txt_req,bg = "white")
+    txt_rep = tk.Label(cadre_rep,
+                       textvariable = txt_req,
+                       bg = "white")
         #menu déroulant
 
     choix_req = tk.StringVar()
@@ -86,10 +159,9 @@ if __name__=="__main__":
     questions = sorted(questions)
 
     menu_déroulant = ttk.Combobox(menu,
-                              textvariable = choix_req,
-                              values = questions,
-                              width=75
-                              )
+                                  textvariable = choix_req,
+                                  values = questions,
+                                  width=75)
     menu_déroulant.current(0)
 
         # boutons
@@ -107,6 +179,10 @@ if __name__=="__main__":
                         bg = "#dadeff",
                         command = root.destroy)
 
+    b_modif = tk.Button(root, 
+                        text = "modifcations",
+                        height = 1,
+                        command = modifications)
 # Affichage
 
     txt_bienvenu.pack()
@@ -114,6 +190,7 @@ if __name__=="__main__":
     cadre_rep.pack(expand = 1 ,fill = "both")
     txt_rep.pack()
     b_affiche_rep.pack(side = "right",pady=10,padx=5)
+    b_modif.pack(side = "right",pady=10,padx=5)
     b_quit.pack(side = tk.BOTTOM,pady=10)
     menu_déroulant.pack(side = "left",expand = 1)
     root.mainloop()
