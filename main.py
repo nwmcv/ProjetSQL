@@ -6,8 +6,12 @@ import sqlite3
 
 def connexion_bd(bd_path):
     """
-    Fonction: connexion_bd
-    : parametre : bd_path #Chemin d'accès vers la base de données
+    Fonction: connexion_bd(bd_path)
+
+     | Cette fonction permet d'établir une connexion avec un base de données
+
+    ~ parametre: bd_path -> Chemin d'accès vers la base de données
+    ~ renvoie: La connexion à une base de données
     """
     connexion = None
     try:
@@ -17,12 +21,31 @@ def connexion_bd(bd_path):
     return connexion
 
 def execute_sql(connexion,sql):
+    """
+    Fonction: execute_sql(connexion,sql)
+
+     | Cette fonction permet d'executer du code sql et de renvoyer le résultat
+
+    ~ parametre: connexion -> connexion à une base de données
+                 sql       -> une requète sql de type str()
+    ~ renvoie: le résultat de la requète sous forme de liste de tuples
+    """
     cur = connexion.cursor()
     cur.execute(sql)
     rows = cur.fetchall()
     return rows
 
 def maxi_in_row(rows,num):
+    """
+    Fonction: maxi_in_row(rows,num)
+
+     | Cette fonction recherche la largeur maximale parmis les élements d'une colone,
+        Cette fonction est utilisé par la fonction affichage()
+
+    ~ parametre: rows -> Une liste de tuples (résultat d'une requète sql)
+                 num  -> le numéro de la colone pour laquelle on veux la largeur maximum
+    ~ renvoie: une liste avec la largeur maximum de chaque colone
+    """
     maxi=0
     for row in rows:
         if len(str(row[num]))>maxi:
@@ -30,39 +53,80 @@ def maxi_in_row(rows,num):
     return maxi
 
 def separateur(largeur_colonnes):
+    """
+    Fonction: separateur(largeur_colonnes)
+
+     | Cette fonction creer une chaine de caractère afin d'afficher proprement le tableau
+
+    ~ parametre: largeur_colonnes -> une liste contenant la largeur maximum de chaque colone liste renvoyé par la fonction maxi_in_row()
+    ~ renvoie: sep -> une chaine de caractère modélisant une séparation
+    """
     sep = '+'
     for num in largeur_colonnes[:-1]:
-        sep += '-'*num + '+'
+        if num == None:
+            pass
+        else:
+            sep += '-'*num + '+'
     return sep + '\n'
 
 
 def affichage(rows):
+    """
+    Fonction: affichage(rows)
+
+     | Cette fonction creer une chaine de caractère qui représente un tableau une fois affiché, elle permet de creer une présentation propre d'un requète sql
+
+    ~ parametre: rows -> une liste de tuples, résultat d'une requète sql
+    ~ renvoie: finale -> une longue chaine de caractères
+    """
     nb_colones = len(rows[0])
-    largeur_colonnes = [3]
+    l1=len(str(len(rows)))
+    largeur_colonnes = [l1+2]
     largeur_colonnes += [largeur_colonnes.append(maxi_in_row(rows,i)) for i in range(nb_colones)]
     sepa = separateur(largeur_colonnes)
     finale = sepa 
     for i in range(len(rows)):
+        finale += '| ' + str(i) + ' '*(l1-len(str(i))) + ' |'
         for k in range(len(rows[i])):
-            finale += '| ' + str(i) + ' |' + str(rows[i][k]) + ' '*(largeur_colonnes[k+1]-len(str(rows[i][k]))) + '|\n'
-            finale += sepa
+            finale += str(rows[i][k]) + ' '*(largeur_colonnes[k+1]-len(str(rows[i][k])))+'|'
+        finale += '\n'+ sepa
     return finale
 
 def charger_req_dico():
+    """
+    Fonction charger_req_dico():
+
+     | Cette fonction charge toutes les requètes et les questions et stock dans un dictionnaire
+
+    ~renvoie: req -> un dictionnaire contenant les questions et les requètes
+    """
     req = {}
     liste_req=os.listdir(dir_req)
-    liste_req.remove('alire.md')
     for fichier in liste_req:
         requete=open(dir_req+fichier)
         txt=requete.read()
         requete.close()
         list_q_req = txt.split('\n')
-        numq=list_q_req[0][0]
+        fichier=fichier.split('.')[0].split('req')
+        numq=int(fichier[1])
         req[numq] = (list_q_req[0],list_q_req[1])
     return req
 
+def num_q(choix_req):
+    """
+    cette fonction renvoie le numéro de la requète à éxecuter
+    """
+    l_q = choix_req.split('|')
+    numq = int(l_q[0])
+    return numq
+
 def Afficher_rep():
-    numq = choix_req.get()[0]
+    """
+    Fonction Afficher_rep():
+
+     | Cette fonction affiche le résultat de la requète sur la fenètre tkinter
+    """
+    numq = num_q(choix_req.get())
     req_a_executer = dico_req[numq][1]
     conn = connexion_bd(dir_db+nom_db)
     res = execute_sql(conn,req_a_executer)
@@ -70,6 +134,14 @@ def Afficher_rep():
     text.insert(1.0,affichage(res))
 
 def test_req(sql):
+    """
+    Fonction test_req(sql):
+
+     | Cette fonction test si une requète sql est valide
+
+    ~paramètre: sql -> requète sous forme de chaine de caractères
+    ~renvoie: un tuple contenant True si la requète est valide sinon False et l'erreur 
+    """
     connect = connexion_bd(dir_db+nom_db)   
     try:
         execute_sql(connect,sql)
@@ -78,6 +150,13 @@ def test_req(sql):
     return (True,"")
 
 def modifications():
+    """
+    Fonction modifications():
+
+     | Cette fonction contient l'affichage d'une nouvelle fenêtre qui permet d'ajouter des requètes
+
+    elle contien la fonction ajouter
+    """
     def ajouter():
         if not saisie_q.get():
             askokcancel(title = "erreur question",
@@ -97,9 +176,9 @@ def modifications():
                             parent = add_q,
                             icon = "error")
             else:
-                maxnum = int(max(dico_req.keys()))+1
+                maxnum = int(max(charger_req_dico().keys()))+1
                 fichier = open(dir_req+"req"+str(maxnum)+".sql","x")
-                fichier.write(str(maxnum)+") "+str(saisie_q.get())+"\n"+str(saisie_req.get()))
+                fichier.write(str(maxnum)+"| "+str(saisie_q.get())+"\n"+str(saisie_req.get()))
                 fichier.close()
                 showinfo (title = "Succès",
                           message = "requète ajoutée avec succès !",
@@ -182,9 +261,9 @@ if __name__=="__main__":
                             fg = "Black",
                             font = ("Calibri",18))
 
-    texte="votre réponse s'affichera ici"
+    texte=" "
     text=tk.Text(cadre_rep, wrap = 'none')
-    scroll_x=tk.Scrollbar(text.master, orient='horizontal')
+    scroll_x=tk.Scrollbar(text.master, orient="horizontal")
     scroll_x.config(command = text.xview)
     text.configure(xscrollcommand = scroll_x.set)
     scroll_x.pack(side = 'bottom', fill = 'x', anchor = 'w')
@@ -197,8 +276,10 @@ if __name__=="__main__":
         #menu déroulant
 
     choix_req = tk.StringVar()
-    questions = [tpl[0] for tpl in dico_req.values()]
-    questions = sorted(questions)
+    questions = []
+    num_questions = sorted(dico_req)
+    for i in num_questions:
+        questions.append(dico_req[i][0])
 
     menu_déroulant = ttk.Combobox(menu,
                                   textvariable = choix_req,
@@ -214,7 +295,7 @@ if __name__=="__main__":
 
     b_quit = tk.Button(root, 
                         text = "Quitter",
-                        relief = tk.GROOVE,
+                        relief = "groove",
                         height = 1,
                         width = 5,
                         fg = "Black",
