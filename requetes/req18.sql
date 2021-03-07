@@ -1,0 +1,2 @@
+18| Quels sont les titres des films les plus connus de Sean Connery ?
+SELECT originalTitle FROM title_basics JOIN title_principals ON title_basics.tconst=title_principals.tconst JOIN name_basics ON title_principals.nconst=name_basics.nconst WHERE name_basics.primaryName='Sean Connery';
