@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter.messagebox import *
+from tkinter.messagebox import askokcancel,showinfo
 import os
 import sqlite3
 
@@ -12,7 +12,7 @@ def connexion_bd(bd_path):
     connexion = None
     try:
         connexion = sqlite3.connect(bd_path)
-    except Error as e:
+    except sqlite3.Error as e:
         return e
     return connexion
 
@@ -22,6 +22,31 @@ def execute_sql(connexion,sql):
     rows = cur.fetchall()
     return rows
 
+def maxi_in_row(rows,num):
+    maxi=0
+    for row in rows:
+        if len(str(row[num]))>maxi:
+            maxi = len(str(row[num]))
+    return maxi
+
+def separateur(largeur_colonnes):
+    sep = '+'
+    for num in largeur_colonnes[:-1]:
+        sep += '-'*num + '+'
+    return sep + '\n'
+
+
+def affichage(rows):
+    nb_colones = len(rows[0])
+    largeur_colonnes = [3]
+    largeur_colonnes += [largeur_colonnes.append(maxi_in_row(rows,i)) for i in range(nb_colones)]
+    sepa = separateur(largeur_colonnes)
+    finale = sepa 
+    for i in range(len(rows)):
+        for k in range(len(rows[i])):
+            finale += '| ' + str(i) + ' |' + str(rows[i][k]) + ' '*(largeur_colonnes[k+1]-len(str(rows[i][k]))) + '|\n'
+            finale += sepa
+    return finale
 
 def charger_req_dico():
     req = {}
@@ -41,7 +66,8 @@ def Afficher_rep():
     req_a_executer = dico_req[numq][1]
     conn = connexion_bd(dir_db+nom_db)
     res = execute_sql(conn,req_a_executer)
-    txt_req.set(res)
+    text.delete('1.0',tk.END)
+    text.insert(1.0,affichage(res))
 
 def test_req(sql):
     connect = connexion_bd(dir_db+nom_db)   
@@ -54,24 +80,32 @@ def test_req(sql):
 def modifications():
     def ajouter():
         if not saisie_q.get():
-            askokcancel(title="erreur question",
-                        message="Veuillez saisir une question",
-                        parent=add_q,
+            askokcancel(title = "erreur question",
+                        message = "Veuillez saisir une question",
+                        parent = add_q,
                         icon = "error")
         elif not saisie_req.get():
-            askokcancel(title="erreur requète",
-                        message="Veuillez saisir une requète",
-                        parent=add_q,
+            askokcancel(title = "erreur requète",
+                        message = "Veuillez saisir une requète",
+                        parent = add_q,
                         icon = "error")
         else:
             test = test_req(saisie_req.get())
             if not test[0]:
-                askokcancel(title="erreur requète",
-                            message="Votre requète contient une erreur :\n\n"+str(test[1]),
-                            parent=add_q,
+                askokcancel(title = "erreur requète",
+                            message = "Votre requète contient une erreur :\n\n"+str(test[1]),
+                            parent = add_q,
                             icon = "error")
             else:
-                pass
+                maxnum = int(max(dico_req.keys()))+1
+                fichier = open(dir_req+"req"+str(maxnum)+".sql","x")
+                fichier.write(str(maxnum)+") "+str(saisie_q.get())+"\n"+str(saisie_req.get()))
+                fichier.close()
+                showinfo (title = "Succès",
+                          message = "requète ajoutée avec succès !",
+                          parent = add_q)
+
+
 
 
     modifications = tk.Tk()
@@ -138,7 +172,6 @@ if __name__=="__main__":
     cadre_rep = tk.LabelFrame(root,
                               bg = "white")
 
-    txt_req = tk.StringVar()
 
 # Widgets #
     
@@ -149,9 +182,18 @@ if __name__=="__main__":
                             fg = "Black",
                             font = ("Calibri",18))
 
-    txt_rep = tk.Label(cadre_rep,
-                       textvariable = txt_req,
-                       bg = "white")
+    texte="votre réponse s'affichera ici"
+    text=tk.Text(cadre_rep, wrap = 'none')
+    scroll_x=tk.Scrollbar(text.master, orient='horizontal')
+    scroll_x.config(command = text.xview)
+    text.configure(xscrollcommand = scroll_x.set)
+    scroll_x.pack(side = 'bottom', fill = 'x', anchor = 'w')
+    scroll_y = tk.Scrollbar(text.master)
+    scroll_y.config(command = text.yview)
+    text.configure(yscrollcommand = scroll_y.set)
+    scroll_y.pack(side = tk.RIGHT, fill = 'y')
+    text.insert("1.0", texte)
+
         #menu déroulant
 
     choix_req = tk.StringVar()
@@ -179,18 +221,18 @@ if __name__=="__main__":
                         bg = "#dadeff",
                         command = root.destroy)
 
-    b_modif = tk.Button(root, 
+    b_modif = tk.Button(menu, 
                         text = "modifcations",
                         height = 1,
                         command = modifications)
 # Affichage
 
+    b_quit.pack(side = "bottom",pady=10)
     txt_bienvenu.pack()
     menu.pack(fill = "x")
     cadre_rep.pack(expand = 1 ,fill = "both")
-    txt_rep.pack()
     b_affiche_rep.pack(side = "right",pady=10,padx=5)
     b_modif.pack(side = "right",pady=10,padx=5)
-    b_quit.pack(side = tk.BOTTOM,pady=10)
     menu_déroulant.pack(side = "left",expand = 1)
+    text.pack(side = 'left', expand = 1, fill = "both")
     root.mainloop()
