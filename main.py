@@ -103,9 +103,8 @@ def charger_req_dico():
     req = {}
     liste_req=os.listdir(dir_req)
     for fichier in liste_req:
-        requete=open(dir_req+fichier)
-        txt=requete.read()
-        requete.close()
+        with open(dir_req+fichier) as requete:
+            txt=requete.read()
         list_q_req = txt.split('\n')
         fichier=fichier.split('.')[0].split('req')
         numq=int(fichier[1])
@@ -177,16 +176,15 @@ def modifications():
                             icon = "error")
             else:
                 maxnum = int(max(charger_req_dico().keys()))+1
-                fichier = open(dir_req+"req"+str(maxnum)+".sql","x")
-                fichier.write(str(maxnum)+"| "+str(saisie_q.get())+"\n"+str(saisie_req.get()))
-                fichier.close()
+                with open(dir_req+"req"+str(maxnum)+".sql","x") as fichier:
+                    fichier.write(str(maxnum)+"| "+str(saisie_q.get())+"\n"+str(saisie_req.get()))
                 showinfo (title = "Succès",
                           message = "requète ajoutée avec succès !",
                           parent = add_q)
 
 
 
-
+#Création de la fenêtre modifications
     modifications = tk.Tk()
     modifications.title("Modifications")
     modifications.geometry('720x480')
