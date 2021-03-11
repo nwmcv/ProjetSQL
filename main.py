@@ -61,7 +61,7 @@ def modifications():
                         parent = add_q,
                         icon = "error")
         else:
-            test = test_req(saisie_req.get())
+            test = test_req(saisie_req.get(),db_path)
             if not test[0]:
                 askokcancel(title = "erreur requète",
                             message = "Votre requète contient une erreur :\n\n"+str(test[1]),
@@ -120,7 +120,7 @@ def modifications():
 dir_req = "requetes/"
 dir_db = "DATA/"
 nom_db = "imdb.db"
-
+db_path = dir_db + nom_db
 
 if __name__=="__main__":
     dico_req=charger_req_dico()

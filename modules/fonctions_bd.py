@@ -31,7 +31,7 @@ def execute_sql(connexion,sql):
     rows = cur.fetchall()
     return rows
 
-    def test_req(sql):
+def test_req(sql,bd_path):
     """
     Fonction test_req(sql):
 
@@ -40,7 +40,7 @@ def execute_sql(connexion,sql):
     ~paramètre: sql -> requète sous forme de chaine de caractères
     ~renvoie: un tuple contenant True si la requète est valide sinon False et l'erreur 
     """
-    connect = connexion_bd(dir_db+nom_db)   
+    connect = connexion_bd(bd_path)   
     try:
         execute_sql(connect,sql)
     except (TypeError,NameError,sqlite3.Error) as e:
