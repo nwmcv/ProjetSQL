@@ -26,24 +26,6 @@ def charger_req_dico():
     return req
 
 
-
-def test_req(sql):
-    """
-    Fonction test_req(sql):
-
-     | Cette fonction test si une requète sql est valide
-
-    ~paramètre: sql -> requète sous forme de chaine de caractères
-    ~renvoie: un tuple contenant True si la requète est valide sinon False et l'erreur 
-    """
-    connect = connexion_bd(dir_db+nom_db)   
-    try:
-        execute_sql(connect,sql)
-    except (TypeError,NameError,sqlite3.Error) as e:
-        return (False,e)
-    return (True,"")
-
-
 def Afficher_rep():
     """
     Fonction Afficher_rep():
@@ -56,6 +38,8 @@ def Afficher_rep():
     res = execute_sql(conn,req_a_executer)
     text.delete('1.0',tk.END)
     text.insert(1.0,affichage(res))
+
+
 
 def modifications():
     """
@@ -90,8 +74,6 @@ def modifications():
                 showinfo (title = "Succès",
                           message = "requète ajoutée avec succès !",
                           parent = add_q)
-
-
 
 #Création de la fenêtre modifications
     modifications = tk.Tk()
@@ -134,16 +116,14 @@ def modifications():
     modifications.mainloop()
 
 
+
 dir_req = "requetes/"
 dir_db = "DATA/"
 nom_db = "imdb.db"
 
 
 if __name__=="__main__":
-
     dico_req=charger_req_dico()
-
-
 #Création de la fenêtre
     root = tk.Tk()
     root.title("Réponses questions SQL")
@@ -157,8 +137,6 @@ if __name__=="__main__":
 
     cadre_rep = tk.LabelFrame(root,
                               bg = "white")
-
-
 # Widgets #
     
         # texte
