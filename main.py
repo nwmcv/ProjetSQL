@@ -1,96 +1,10 @@
-import tkinter as tk
 from tkinter import ttk
 from tkinter.messagebox import askokcancel,showinfo
+import tkinter as tk
+from modules.fonctions_bd import *
+from modules.affichage_tk import *
 import os
-import sqlite3
 
-def connexion_bd(bd_path):
-    """
-    Fonction: connexion_bd(bd_path)
-
-     | Cette fonction permet d'établir une connexion avec un base de données
-
-    ~ parametre: bd_path -> Chemin d'accès vers la base de données
-    ~ renvoie: La connexion à une base de données
-    """
-    connexion = None
-    try:
-        connexion = sqlite3.connect(bd_path)
-    except sqlite3.Error as e:
-        return e
-    return connexion
-
-def execute_sql(connexion,sql):
-    """
-    Fonction: execute_sql(connexion,sql)
-
-     | Cette fonction permet d'executer du code sql et de renvoyer le résultat
-
-    ~ parametre: connexion -> connexion à une base de données
-                 sql       -> une requète sql de type str()
-    ~ renvoie: le résultat de la requète sous forme de liste de tuples
-    """
-    cur = connexion.cursor()
-    cur.execute(sql)
-    rows = cur.fetchall()
-    return rows
-
-def maxi_in_row(rows,num):
-    """
-    Fonction: maxi_in_row(rows,num)
-
-     | Cette fonction recherche la largeur maximale parmis les élements d'une colone,
-        Cette fonction est utilisé par la fonction affichage()
-
-    ~ parametre: rows -> Une liste de tuples (résultat d'une requète sql)
-                 num  -> le numéro de la colone pour laquelle on veux la largeur maximum
-    ~ renvoie: une liste avec la largeur maximum de chaque colone
-    """
-    maxi=0
-    for row in rows:
-        if len(str(row[num]))>maxi:
-            maxi = len(str(row[num]))
-    return maxi
-
-def separateur(largeur_colonnes):
-    """
-    Fonction: separateur(largeur_colonnes)
-
-     | Cette fonction creer une chaine de caractère afin d'afficher proprement le tableau
-
-    ~ parametre: largeur_colonnes -> une liste contenant la largeur maximum de chaque colone liste renvoyé par la fonction maxi_in_row()
-    ~ renvoie: sep -> une chaine de caractère modélisant une séparation
-    """
-    sep = '+'
-    for num in largeur_colonnes[:-1]:
-        if num == None:
-            pass
-        else:
-            sep += '-'*num + '+'
-    return sep + '\n'
-
-
-def affichage(rows):
-    """
-    Fonction: affichage(rows)
-
-     | Cette fonction creer une chaine de caractère qui représente un tableau une fois affiché, elle permet de creer une présentation propre d'un requète sql
-
-    ~ parametre: rows -> une liste de tuples, résultat d'une requète sql
-    ~ renvoie: finale -> une longue chaine de caractères
-    """
-    nb_colones = len(rows[0])
-    l1=len(str(len(rows)))
-    largeur_colonnes = [l1+2]
-    largeur_colonnes += [largeur_colonnes.append(maxi_in_row(rows,i)) for i in range(nb_colones)]
-    sepa = separateur(largeur_colonnes)
-    finale = sepa 
-    for i in range(len(rows)):
-        finale += '| ' + str(i) + ' '*(l1-len(str(i))) + ' |'
-        for k in range(len(rows[i])):
-            finale += str(rows[i][k]) + ' '*(largeur_colonnes[k+1]-len(str(rows[i][k])))+'|'
-        finale += '\n'+ sepa
-    return finale
 
 def charger_req_dico():
     """
@@ -111,26 +25,7 @@ def charger_req_dico():
         req[numq] = (list_q_req[0],list_q_req[1])
     return req
 
-def num_q(choix_req):
-    """
-    cette fonction renvoie le numéro de la requète à éxecuter
-    """
-    l_q = choix_req.split('|')
-    numq = int(l_q[0])
-    return numq
 
-def Afficher_rep():
-    """
-    Fonction Afficher_rep():
-
-     | Cette fonction affiche le résultat de la requète sur la fenètre tkinter
-    """
-    numq = num_q(choix_req.get())
-    req_a_executer = dico_req[numq][1]
-    conn = connexion_bd(dir_db+nom_db)
-    res = execute_sql(conn,req_a_executer)
-    text.delete('1.0',tk.END)
-    text.insert(1.0,affichage(res))
 
 def test_req(sql):
     """
@@ -147,6 +42,20 @@ def test_req(sql):
     except (TypeError,NameError,sqlite3.Error) as e:
         return (False,e)
     return (True,"")
+
+
+def Afficher_rep():
+    """
+    Fonction Afficher_rep():
+
+     | Cette fonction affiche le résultat de la requète sur la fenètre tkinter
+    """
+    numq = num_q(choix_req.get())
+    req_a_executer = dico_req[numq][1]
+    conn = connexion_bd(dir_db+nom_db)
+    res = execute_sql(conn,req_a_executer)
+    text.delete('1.0',tk.END)
+    text.insert(1.0,affichage(res))
 
 def modifications():
     """
