@@ -1,3 +1,7 @@
+#coding utf-8
+#Houille Lukas T°D
+#18/03/2021
+
 from tkinter import ttk
 from tkinter.messagebox import askokcancel,showinfo
 import tkinter as tk
