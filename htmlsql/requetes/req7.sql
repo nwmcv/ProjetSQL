@@ -1,0 +1,2 @@
+7| Quels sont les films d’Olivier Nakache ?
+SELECT primaryTitle FROM title_basics JOIN title_writers ON title_basics.tconst = title_writers.tconst JOIN name_basics ON title_writers.writers = name_basics.nconst WHERE primaryName='Olivier Nakache';
