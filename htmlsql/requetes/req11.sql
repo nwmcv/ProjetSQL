@@ -1,2 +1,0 @@
-11| Quels sont les titres des films notés plus de 9 sur 10 avec plus de 10 000 votes ?
-SELECT originalTitle FROM title_basics WHERE tconst IN (SELECT tconst FROM title_ratings WHERE averageRating>9 AND numVotes>10000) AND titleType='movie';

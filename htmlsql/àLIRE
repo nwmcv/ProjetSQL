@@ -1,3 +1,0 @@
-il faut ajouter dans le répertoir htmlsql, un dossier data/ contenant la base de données imdb.db
-
-il faut ensuite éxecuter une fois main.py dans votre ide si vous ajoutez des requètes

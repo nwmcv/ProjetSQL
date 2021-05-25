@@ -1,2 +1,0 @@
-8| Quel est le film ayant recueilli le plus de votes ?
-SELECT primaryTitle FROM title_basics JOIN title_ratings ON title_basics.tconst=title_ratings.tconst  WHERE title_ratings.numVotes IN (SELECT max(numVotes) FROM title_ratings);
