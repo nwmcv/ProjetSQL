@@ -1,2 +1,0 @@
-10| Quelles sont les noms et rôles (category et job) des personnes intervenant dans la production du film 'Return of the Jedi' ?
-SELECT primaryName,category,job FROM title_principals JOIN name_basics ON title_principals.nconst=name_basics.nconst WHERE title_principals.tconst = 86190;

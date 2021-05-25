@@ -1,2 +1,0 @@
-21| Quels sont les noms des épisodes de Game of Thrones ?
-SELECT primaryTitle FROM title_basics JOIN title_episode ON title_basics.tconst=title_episode.tconst WHERE title_episode.parentTconst IN (SELECT tconst FROM title_basics WHERE titleType='tvSeries' AND primaryTitle LIKE 'Game of Thrones');

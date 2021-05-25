@@ -1,2 +1,0 @@
-20| Quel sont les réalisateurs ayant fait les cinq film les mieux notés ?
-SELECT primaryName,originalTitle FROM name_basics JOIN title_directors ON name_basics.nconst=title_directors.directors JOIN title_basics ON title_directors.tconst=title_basics.tconst JOIN title_ratings ON title_basics.tconst=title_ratings.tconst WHERE titleType='movie' ORDER BY averageRating DESC LIMIT 5;
