@@ -1,5 +1,5 @@
 #coding utf-8
-# 24/05/2021
+# 25/05/2021
 # Houille Lukas
 
 import time
@@ -48,22 +48,23 @@ class colors:
 def main():
     """
     Fonction main()
-    Cette fonction permet les premières entrees de l'utilisateur et d'utiliser les differentes autres fonctions
+    Cette fonction permet les premieres entrees de l'utilisateur et d'utiliser les differentes autres fonctions
     Parametre: None
     """
-    n = input("entrez la clé RSA que vous souhaitez décomposer : ")
-    if n == "exit":
-        pass
-    else:
-        try:
-            if int(n)<99999409999999:
-                choix = int(input("Avec quelle methode souhaitez vous utiliser pour casser cette clé :\n1 -> brutForce\n2 -> brutForceOptimise\n3 -> comparer les deux\n: "))
-                execute(int(n),choix)
-            else:
-                execute(int(n),2)
-        except ValueError as e:
-            print("veuillez entrer un nombre entier")
-            main()
+    n = input("entrez la clé RSA que vous souhaitez decomposer : ")
+    try:
+        if int(n) < (9999991 ** 2): #Nombre choisi en fonction des nombres premiers disponibles dans le fichier
+            choix = input("Avec quelle methode souhaitez vous utiliser pour casser cette clé :\n1 -> brutForce\n2 -> brutForceOptimise\n3 -> comparer les deux\n: ")
+        else:
+            choix = 2
+        if n or choix == "exit":
+            pass
+        else:
+            execute(int(n),int(choix))
+    except ValueError as e:
+        print(colors.fg.red+"veuillez entrer un nombre entier ou exit"+colors.reset)
+        continuer()
+        main()
 
 def affichage(p,q,t2="None"):
     """
@@ -139,9 +140,9 @@ def cassage_cle_opti(nb):
 def cassage_cle_brut(nb):
     """
     Fonction cassage_cle_brut
-    Cette fonction décompose la cle RSA en ses deux facteurs premier avec une methode brut force
+    Cette fonction decompose la cle RSA en ses deux facteurs premier avec une methode brut force
     Parametre: nb (Une cle RSA)
-    Renvoie: p,q, les deux facteurs premier qui constitue la cle
+    Renvoie: p,q, deux entiers facteurs premier qui constitue la cle
     """
     with open("nbpremier.txt") as nbs:
         liste_nb = nbs.read().split('\n')
