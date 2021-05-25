@@ -113,7 +113,7 @@ def execute(n,choix = 1):
 
 def continuer():
     """
-    Fonction pour marquer des pause dans l'execution du programme attendre que l'utlisateur sois pret
+    Fonction pour marquer des pauses dans l'execution du programme attendre que l'utlisateur soit pret
     """
     input("tapez entrer pour continuer:\n")
     main()
